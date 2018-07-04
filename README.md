@@ -12,6 +12,6 @@ Within the root of the repo:
 
 ## Todo: 
 
-Common dropbox folder? (Currently it will just upload to an individual folder) 
-Upload to google cloud storage instead of dropbox? 
+* Common dropbox folder? (Currently it will just upload to an individual folder) 
+* Upload to google cloud storage instead of dropbox? 
 
