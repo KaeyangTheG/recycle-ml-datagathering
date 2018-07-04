@@ -1,13 +1,43 @@
 <!doctype html>
 <html>
   <head>
-    <title>Dan Carlin</title>
+    <title>Data The Gathering</title>
   </head>
+  <style>
+    body {
+      background: #333;
+      color: #fff;
+    }
+    canvas {
+      box-sizing: border-box;
+    }
+    canvas.capturing {
+      border: 3px solid lime;
+    }
+    #auth-section {
+      display: flex;
+      flex-direction: column;
+    }
+    select {
+      width: 200px;
+    }
+  </style>
   <body>
     <div>
-      <div style="display:none; flex-direction: column" id="auth-section">
+      <div style="display:none;" id="auth-section">
         <canvas id="capture" width="600" height="600" style="margin:auto"></canvas>
-        <div id="indicator" style="display:none; margin: auto; margin-top: 20px">Capturing data...</div>
+        <div style="margin: auto">
+          <label for="class-select">Choose label to train:</label>
+            <select id="class-select">
+              <option value="paper-cup">Paper Cup</option>
+              <option value="battery">Battery</option>
+              <option value="banana">Banana Peel</option>
+              <option value="can">Can</option>
+              <option value="paper-plate">Paper Plate</option>
+              <option value="" selected>--Please choose an option--</option>
+          </select>
+          <div id="indicator" style="display:none; margin: auto; margin-top: 20px">Capturing data...</div>
+        </div>
         <video style="display:none"></video>
         <img style="display: none"/>
       </div>

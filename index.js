@@ -7,62 +7,62 @@ const options = {
     height: 600
   }
 }
-//800 x 600
 
-// var CLIENT_ID = '42zjexze6mfpf7x';
-    var CLIENT_ID = '0owbegbmtfa6ih7';
-  // Parses the url and gets the access token if it is in the urls hash
-  function getAccessTokenFromUrl() {
-   return utils.parseQueryString(window.location.hash).access_token;
-  }
+var CLIENT_ID = '0owbegbmtfa6ih7';
+// Parses the url and gets the access token if it is in the urls hash
+function getAccessTokenFromUrl() {
+ return utils.parseQueryString(window.location.hash).access_token;
+}
 
-  // If the user was just redirected from authenticating, the urls hash will
-  // contain the access token.
-  function isAuthenticated() {
-    return !!getAccessTokenFromUrl();
-  }
+// If the user was just redirected from authenticating, the urls hash will
+// contain the access token.
+function isAuthenticated() {
+  return !!getAccessTokenFromUrl();
+}
 
-  // Render a list of items to #files
-  function renderItems(items) {
-    var filesContainer = document.getElementById('files');
-    items.forEach(function(item) {
-      var li = document.createElement('li');
-      li.innerHTML = item.name;
-      filesContainer.appendChild(li);
-    });
-  }
+// Render a list of items to #files
+function renderItems(items) {
+  var filesContainer = document.getElementById('files');
+  items.forEach(function(item) {
+    var li = document.createElement('li');
+    li.innerHTML = item.name;
+    filesContainer.appendChild(li);
+  });
+}
 
-  // This example keeps both the authenticate and non-authenticated setions
-  // in the DOM and uses this function to show/hide the correct section.
-  function showPageSection(elementId) {
-    document.getElementById(elementId).style.display = 'flex';
-  }
+// This example keeps both the authenticate and non-authenticated setions
+// in the DOM and uses this function to show/hide the correct section.
+function showPageSection(elementId) {
+  document.getElementById(elementId).style.display = 'flex';
+}
 
-  if (isAuthenticated()) {
-    showPageSection('auth-section');
+if (isAuthenticated()) {
+  showPageSection('auth-section');
 
-    // Create an instance of Dropbox with the access token and use it to
-    // fetch and render the files in the users root directory.
-    var dbx = new Dropbox.Dropbox({ accessToken: getAccessTokenFromUrl() });
-    // dbx.filesListFolder({path: ''})
-    //   .then(function(response) {
-    //     renderItems(response.entries);
-    //   })
-    //   .catch(function(error) {
-    //     console.error(error);
-    //   });
+  // Create an instance of Dropbox with the access token and use it to
+  // fetch and render the files in the users root directory.
+  var dbx = new Dropbox.Dropbox({ accessToken: getAccessTokenFromUrl() });
+  // dbx.filesListFolder({path: ''})
+  //   .then(function(response) {
+  //     renderItems(response.entries);
+  //   })
+  //   .catch(function(error) {
+  //     console.error(error);
+  //   });
 
-  } else {
-    showPageSection('pre-auth-section');
+} else {
+  showPageSection('pre-auth-section');
 
-    // Set the login anchors href using dbx.getAuthenticationUrl()
-    var dbx = new Dropbox.Dropbox({ clientId: CLIENT_ID });
-    var authUrl = dbx.getAuthenticationUrl('http://localhost:1234/auth');
-    document.getElementById('authlink').href = authUrl;
-  }
+  // Set the login anchors href using dbx.getAuthenticationUrl()
+  var dbx = new Dropbox.Dropbox({ clientId: CLIENT_ID });
+  var authUrl = dbx.getAuthenticationUrl('http://localhost:1234/auth');
+  document.getElementById('authlink').href = authUrl;
+}
 
 const getUserMedia = navigator.mediaDevices.getUserMedia
 var v = document.querySelector('video');
+var indicator = document.querySelector('#indicator');
+var select = document.querySelector('#class-select');
 var canvas = document.querySelector('#capture');
 var context = canvas.getContext('2d');
 
@@ -79,6 +79,10 @@ if (getUserMedia) {
       video.onloadedmetadata = (e => video.play())
     })
 }
+
+select.addEventListener('change', function () {
+  select.blur()
+});
 
 v.addEventListener('play', function(){
   draw(this,context, cw,ch);
@@ -142,30 +146,25 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab], {type: mimeString});
 }
 
-// function sendToDropbox (blob) {
-//   return dbx.filesUpload({path: `/training/example_${Date.now()}.png`, contents: blob})
-// }
-
-function _sendToDropbox (blob) {
-  return dbx.filesUpload({path: `/training/example_${Date.now()}.png`, contents: blob})
+function _sendToDropbox (blob, label) {
+  return dbx.filesUpload({path: `/training/${label}/${label}_${Date.now()}.png`, contents: blob})
 }
 
 const sendToDropbox = throttle(_sendToDropbox, 200);
 
 document.body.addEventListener('keypress', e => {
-  console.log(e.which)
-  //if it is spacebar then invoke a debounced sendToDropbox function!
-  if (e.which === 32) {
+  //if it is spacebar then invoke a throttled sendToDropbox function
+  if (e.which === 32 && select.value) {
     var img = document.querySelector('img')
     img.src = canvas.toDataURL()
-    sendToDropbox(dataURItoBlob(img.src))
-    document.querySelector('#indicator').style.display = 'block';
+    sendToDropbox(dataURItoBlob(img.src), select.value)
+    indicator.style.display = 'block';
+    canvas.classList.add('capturing');
   }
 })
 document.body.addEventListener('keyup', e => {
-  console.log('key up!')
-  //change dom style
-  document.querySelector('#indicator').style.display = 'none';
+  indicator.style.display = 'none';
+  canvas.classList.remove('capturing');
 })
 
 function throttle(func, wait, options) {
