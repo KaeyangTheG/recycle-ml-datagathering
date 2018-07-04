@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dan Carlin</title>
+  </head>
+  <body>
+    <div>
+      <div style="display:none; flex-direction: column" id="auth-section">
+        <canvas id="capture" width="600" height="600" style="margin:auto"></canvas>
+        <div id="indicator" style="display:none; margin: auto; margin-top: 20px">Capturing data...</div>
+        <video style="display:none"></video>
+        <img style="display: none"/>
+      </div>
+      <div style="display:none" id="pre-auth-section">
+        <a href="" id="authlink" class="button">Authenticate</a>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropbox.js/4.0.7/Dropbox-sdk.js"></script>
+    <script src="utils.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
